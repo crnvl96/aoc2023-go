@@ -4,12 +4,44 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
 )
 
 func main() {
 	res := trebuchet()
 	fmt.Println(res)
+}
+
+func first(line string, comparator []string, currIdx int) int {
+	if currIdx > len(line)-1 {
+		return 0
+	}
+
+	target := string(line[currIdx])
+
+	if slices.Contains(comparator, target) {
+		if d, err := strconv.Atoi(target); err == nil {
+			return d * 10
+		}
+	}
+
+	return first(line, comparator, currIdx+1)
+}
+
+func last(line string, comparator []string, currIdx int) int {
+	if currIdx < 0 {
+		return 0
+	}
+
+	target := string(line[currIdx])
+	if slices.Contains(comparator, target) {
+		if d, err := strconv.Atoi(target); err == nil {
+			return d
+		}
+	}
+
+	return last(line, comparator, currIdx-1)
 }
 
 func trebuchet() int {
@@ -25,29 +57,8 @@ func trebuchet() int {
 	total := 0
 	for scanner.Scan() {
 		line := scanner.Text()
-		limit := len(line) - 1
-	first:
-		for _, c := range line {
-			for _, t := range targets {
-				if t == string(c) {
-					if d, err := strconv.Atoi(t); err == nil {
-						total += 10 * d
-						break first
-					}
-				}
-			}
-		}
-	last:
-		for c := limit; c >= 0; c-- {
-			for _, t := range targets {
-				if t == string(line[c]) {
-					if d, err := strconv.Atoi(t); err == nil {
-						total += d
-						break last
-					}
-				}
-			}
-		}
+		total += first(line, targets, 0) + last(line, targets, len(line)-1)
 	}
+
 	return total
 }
