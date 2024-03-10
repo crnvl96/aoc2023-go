@@ -30,7 +30,7 @@ func first(line string, comparator []string, currIdx int) int {
 }
 
 func last(line string, comparator []string, currIdx int) int {
-	if currIdx < 0 {
+	if currIdx < 0 || currIdx > len(line)-1 {
 		return 0
 	}
 
@@ -55,9 +55,13 @@ func trebuchet() int {
 	scanner := bufio.NewScanner(file)
 	targets := []string{"1", "2", "3", "4", "5", "6", "7", "8", "9"}
 	total := 0
+
 	for scanner.Scan() {
 		line := scanner.Text()
-		total += first(line, targets, 0) + last(line, targets, len(line)-1)
+		startingIdxFirst := 0
+		startingIdxLast := len(line) - 1
+
+		total += first(line, targets, startingIdxFirst) + last(line, targets, startingIdxLast)
 	}
 
 	return total
